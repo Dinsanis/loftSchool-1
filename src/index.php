@@ -1,23 +1,15 @@
 <?php
-require_once('C:\OpenServer\domains\Loft\src\function.php');
+require_once('..\src\function.php');
 ob_start();
 
 echo "<div class='jumbotron'>";
 echo "<h1>", "Задание 1", "</h1>";
-$data = [
-    "Какой",
-    "же",
-    "я",
-    "тупой"
-];
-echo "<p>", task1($data, true), "</p>";
+task1([1,2,3], false);
 echo "</div>";
 
 echo "<div class='jumbotron'>";
 echo "<h1>", "Задание 2", "</h1>";
-$data = [];
-echo "<p>", task2("+", 1, 2, 3, 5.2), "</p>";
-echo "</div>";
+echo task2('*', 1, 2, 3, 10);
 
 echo "<div class='jumbotron'>";
 echo "<h1>", "Задание 3", "</h1>";
@@ -31,9 +23,7 @@ echo "</div>";
 
 echo "<div class='jumbotron'>";
 echo "<h1>", "Задание 5", "</h1>";
-$text1 = "Карл у Клары украл Кораллы";
-$text2 = "Две бутылки лимонада";
-echo task5($text1, $text2);
+echo "<p>", task5(), "</p>";
 echo "</div>";
 
 echo "<div class='jumbotron'>";

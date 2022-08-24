@@ -1,123 +1,82 @@
 <?php
 
-function task1($arr, $bool = false)
+function task1( array $strings, bool $return = true)
 {
-    foreach ($arr as $item) {
-        echo "<p>", $item, "</p>";
+    $result = implode("\n", array_map(function (string $str) {
+    return "<p>$str</p>";
+    }, $strings));
+
+    if ($return) {
+        return $result;
     }
-    if ($bool) {
-        return implode(" ", $arr);
-    }
+
+    echo $result;
 }
 
-
-
-function some_operation($num_arr, $sign){
-    if(is_array($num_arr)){
-        switch ($sign) {
-            case '+':
-                echo $num_arr[0];
-                $sum = $num_arr[0];
-
-                for ($value = 1; $value < count($num_arr); $value++){
-                    echo " + " . $num_arr[$value];
-                    $sum += $num_arr[$value];
-                }
-
-                echo " = " . $sum;
-                break;
-
-
-            case '-':
-                echo $num_arr[0];
-                $sum = $num_arr[0];
-
-                for ($value = 1; $value < count($num_arr); $value++){
-                    echo " - " . $num_arr[$value];
-                    $sum -= $num_arr[$value];
-                }
-
-                echo " = " . $sum;
-                break;
-
-
-            case '*':
-                echo $num_arr[0];
-                $sum = $num_arr[0];
-
-                for ($value = 1; $value < count($num_arr); $value++){
-                    echo " * " . $num_arr[$value];
-                    $sum *= $num_arr[$value];
-                }
-
-                echo " = " . $sum;
-                break;
-
-
-            case '/':
-                echo $num_arr[0];
-                $sum = $num_arr[0];
-
-                for ($value = 1; $value < count($num_arr); $value++){
-                    echo " / " . $num_arr[$value];
-                    $sum /= $num_arr[$value];
-                }
-
-                echo " = " . $sum;
-                break;
-
-            default:
-                echo "Incorrect sign. Please, try again";
-                break;
+function task2(string $action, ...$args)
+{
+    foreach ($args as $n => $arg) {
+        if (!is_int($arg) && !is_float($arg)) {
+            trigger_error('argument #' . $n . 'is not integer of float');
+            return 'ERROR: wrong argument';
         }
     }
+    switch ($action) {
+        case '+':
+            return array_sum($args);
+        case '-':
+            return array_shift($args) - array_sum($args);
+        case '/':
+            $result = array_shift($args);
+            foreach ($args as $n => $arg) {
+                if ($arg == 0) {
+                    trigger_error('derive by zero on argument #' . ($n +1));
+                    return 'ERROR: derive by zero';
+                }
+                $result = $result / $arg;
+            }
+            return $result;
+        case '*':
+            $result = 1;
+            foreach ($args as $arg) {
+                $result *= $arg;
+            }
+
+            return $result;
+
+        default:
+            return 'ERROR: unknown actions';
+    }
 }
 
 
 
-function task2($sign){
-    $numbers = array();
-
-    for ($i = 1; $i < func_num_args(); $i++){
-        $numbers[] = func_get_arg($i);
-    }
-
-    if (is_array($numbers)){
-        some_operation($numbers, $sign);
-    }
-}
-
-
-
-function task3($sizeRows, $sizeColumns)
+function task3($a, $b)
 {
-    if (!is_int($sizeRows)) {
-        echo "Колличество строк в таблице заданно не верно.";
-        return null;
+    if (!is_int($a)) {
+        trigger_error('A is not integer');
+        return false;
     }
-    if (!is_int($sizeColumns)) {
-        echo "Колличество столбцов в таблице заданно не верно.";
-        return null;
+    if (!is_int($a)) {
+        trigger_error('B is not integer');
+        return false;
     }
-    if ($sizeRows == 0 && $sizeColumns == 0) {
-        return null;
+    if ($a < 0 || $b < 0) {
+        trigger_error('Argumentsmust be  positive');
+        return false;
     }
-    if ($sizeRows != $sizeColumns) {
-        echo "Колличество строк и столбцов в таблице должно быть одинаковое.";
-        return null;
-    }
-    echo "<table>";
-    for ($row = 1; $row <= $sizeRows; $row++) {
-        echo "<tr>";
-        for ($col = 1; $col <= $sizeColumns; $col++) {
-            $num = $row * $col;
-            echo "<td>", $num, "<td>";
+    $result = '<table>';
+    for ($i = 1; $i <= $a; $i++){
+        $result .= '<tr>';
+        for ($j = 1; $j <= $b; $j++) {
+            $result .= '<td>';
+            $result .= $i * $j;
+            $result .= '</td>';
         }
-        echo "</tr>";
+        $result .= '</tr>';
     }
-    echo "</table>";
-    echo "<br>";
-    task4($sizeRows - 1, $sizeColumns - 1);
+    $result .= '</table>';
+        echo $result;
 }
 
 
@@ -125,21 +84,35 @@ function task3($sizeRows, $sizeColumns)
 function task4()
 {
     $date = date("d.m.Y H:i");
-    return $date;
+    echo $date;
+    echo '<br>';
+    echo strtotime($date);
 }
 
 
 
-function task5($text1, $text2) {
-$newText1 = str_replace("К", "", $text1);
-    echo $newText1 . "<br>";
-    $newText2 = str_replace("Две", "Три", $text2);
-    echo $newText2;
+function task5()
+{
+    $text1 = "Карл у Клары украл Кораллы";
+    $text2 = "Две бутылки лимонада";
+    echo str_replace("К", "", $text1);
+    echo '<br>';
+    echo str_replace("Две", "Три", $text2);
 }
 
 
 
-function task6($file, $str){
+function task6($file, $str)
+{
     file_put_contents($file, $str);
-}
+    $fp = fopen($file, 'r');
+    if (!$fp) {
+        return false;
+    }
 
+    $str = '';
+    while (!feof($fp)) {
+        $str .= fgets($fp, 1024);
+    }
+    echo $str;
+}
